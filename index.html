@@ -24,6 +24,9 @@
     </head>
     <body>
         <div id="titlebar">
+            <button id="back-btn" style="display: none;">
+                < Back
+            </button>
             Kastelliitti
         </div>
         <div id="main-container">
@@ -37,14 +40,18 @@
                 <button id="port-select-btn">Select</button>
             </div>
             <div id="com-view" style="display: none;">
-                <button id="back-btn">
-                    Back
-                </button>
-                <div id="received-view"></div>
-                <input id="input-field">
-                <button id="send-btn">
-                    Send
-                </button>
+                <div class="data-card">
+                    Temperature: <span id="d-temp">-</span> &deg;C
+                </div>
+                <div class="data-card">
+                    Pressure: <span id="d-pressure">-</span> mbar
+                </div>
+                <div class="data-card">
+                    LDR: <span id="d-ldr">-</span>
+                </div>
+                <div class="data-card">
+                    3D Acceleration: (<span id="d-ax">-</span>, <span id="d-ay">-</span>, <span id="d-az">-</span>)
+                </div>
             </div>
         </div>
         <script src="renderer.js"></script>

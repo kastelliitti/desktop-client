@@ -62,3 +62,23 @@ body {
     height: 50px;
     cursor: pointer;
 }
+
+#back-btn {
+    position: absolute;
+    left: 0;
+    background: transparent;
+    border: none;
+    color: #439CEF;
+    font-size: 18px;
+    margin: 10px;
+    app-region: none;
+}
+
+.data-card {
+    background-color: #444;
+    font-size: 14px;
+    padding: 30px;
+    width: 300px;
+    border-radius: 25px;
+    margin: 10px;
+}

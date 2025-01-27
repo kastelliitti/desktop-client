@@ -37,6 +37,7 @@ const selectPort = () => {
         serialcom.select(port);
         document.getElementById("port-selection").style.display = "none";
         document.getElementById("com-view").style.display = "inline";
+        document.getElementById("back-btn").style.display = "inline";
     }
 }
 
@@ -51,15 +52,23 @@ const closePort = () => {
     serialcom.closePort();
     document.getElementById("port-selection").style.display = "inline";
     document.getElementById("com-view").style.display = "none";
+    document.getElementById("back-btn").style.display = "none";
     refreshSerialPorts();
 }
 
 serialcom.dataReceived((data) => {
-    document.getElementById("received-view").innerHTML += (data + "</br>");
+    // document.getElementById("received-view").innerHTML += (data + "</br>");
+    let parsedData = data.split(",");
+    document.getElementById("d-temp").innerHTML = parsedData[0];
+    document.getElementById("d-pressure").innerHTML = parsedData[1];
+    document.getElementById("d-ldr").innerHTML = parsedData[2];
+    document.getElementById("d-ax").innerHTML = parsedData[3];
+    document.getElementById("d-ay").innerHTML = parsedData[4];
+    document.getElementById("d-az").innerHTML = parsedData[5];
 });
 
 document.getElementById("port-select-btn").addEventListener("click", selectPort);
-document.getElementById("send-btn").addEventListener("click", sendData);
+// document.getElementById("send-btn").addEventListener("click", sendData);
 document.getElementById("back-btn").addEventListener("click", closePort);
 
 refreshSerialPorts();
