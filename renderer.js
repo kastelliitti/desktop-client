@@ -3,6 +3,7 @@ const refreshSerialPorts = async () => {
     const serialPorts = await serialcom.list();
     console.log(serialPorts);
     for (let i = 0; i < serialPorts.length; i++) {
+        console.log(serialPorts[i]);
         let option = document.createElement("option");
         option.text = serialPorts[i].friendlyName;
         option.value = serialPorts[i].path;

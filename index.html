@@ -23,21 +23,26 @@
         <link rel="stylesheet" href="ui.css">
     </head>
     <body>
-        <div id="port-selection">
-            <h1>
-                Select Serial Port:
-            </h1>
-            <select id="port-selector">
-                <option value="not-selected">Select...</option>
-            </select>
-            <button id="port-select-btn">Select</button>
+        <div id="titlebar">
+            Kastelliitti
         </div>
-        <div id="com-view" style="display: none;">
-            <div id="received-view">Lorem ipsum dolor sit amet...</div>
-            <input id="input-field">
-            <button id="send-btn">
-                Send
-            </button>
+        <div id="main-container">
+            <div id="port-selection">
+                <h1>
+                    Select Serial Port:
+                </h1>
+                <select id="port-selector">
+                    <option value="not-selected">Select...</option>
+                </select>
+                <button id="port-select-btn">Select</button>
+            </div>
+            <div id="com-view" style="display: none;">
+                <div id="received-view">Lorem ipsum dolor sit amet...</div>
+                <input id="input-field">
+                <button id="send-btn">
+                    Send
+                </button>
+            </div>
         </div>
         <script src="renderer.js"></script>
     </body>

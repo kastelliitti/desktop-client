@@ -14,6 +14,51 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>. */
 
+html, body {
+    margin: 0;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #222;
+    color: white;
+}
+
+#titlebar {
+    height: 60px;
+    background: #444;
+    color: #439CEF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    app-region: drag;
+}
+
+#port-selection {
+    text-align: center;
+}
+
+#main-container {
+    width: 80%;
+    margin: auto;
+}
+
+#port-selector {
+    font-size: 18px;
+    background-color: #444;
+    color: white;
+    border: none;
+    height: 50px;
+}
+
+#port-select-btn {
+    font-size: 18px;
+    background-color: #444;
+    color: white;
+    border: none;
+    height: 50px;
+    cursor: pointer;
 }
