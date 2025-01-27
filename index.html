@@ -1,0 +1,44 @@
+<!-- Kastelliitti Desktop Client
+    Copyright (C) 2025 Kastelliitti
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>. -->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Kastelliitti Desktop Client
+        </title>
+        <link rel="stylesheet" href="ui.css">
+    </head>
+    <body>
+        <div id="port-selection">
+            <h1>
+                Select Serial Port:
+            </h1>
+            <select id="port-selector">
+                <option value="not-selected">Select...</option>
+            </select>
+            <button id="port-select-btn">Select</button>
+        </div>
+        <div id="com-view" style="display: none;">
+            <div id="received-view">Lorem ipsum dolor sit amet...</div>
+            <input id="input-field">
+            <button id="send-btn">
+                Send
+            </button>
+        </div>
+        <script src="renderer.js"></script>
+    </body>
+</html>
