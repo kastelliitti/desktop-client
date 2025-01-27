@@ -69,6 +69,9 @@ app.whenReady().then(() => {
     });
     ipcMain.handle("send", (_event, data) => {
         port.write(data);
+    });
+    ipcMain.handle("close-port", () => {
+        if (port.isOpen) port.close();
     })
     createWindow();
 

@@ -20,5 +20,6 @@ contextBridge.exposeInMainWorld("serialcom", {
     list: () => ipcRenderer.invoke("list"),
     select: (port) => ipcRenderer.invoke("select", port),
     dataReceived: (callback) => ipcRenderer.on("data-received", (_event, value) => callback(value)),
-    sendData: (data) => ipcRenderer.invoke("send", data)
+    sendData: (data) => ipcRenderer.invoke("send", data),
+    closePort: () => ipcRenderer.invoke("close-port")
 });
