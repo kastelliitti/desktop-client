@@ -14,6 +14,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>. */
 
+let lastUpdate;
+
 const refreshSerialPorts = async () => {
     const selector = document.getElementById("port-selector");
     const serialPorts = await serialcom.list();
@@ -56,19 +58,91 @@ const closePort = () => {
     refreshSerialPorts();
 }
 
+const clearDataFields = () => {
+    document.getElementById("d-temp").innerHTML = "-";
+    document.getElementById("d-pressure").innerHTML = "-";
+    document.getElementById("d-ldr").innerHTML = "-";
+    document.getElementById("d-voltage").innerHTML = "-";
+    document.getElementById("d-ax").innerHTML = "-";
+    document.getElementById("d-ay").innerHTML = "-";
+    document.getElementById("d-az").innerHTML = "-";
+}
+
+const setActiveModeButton = (activeBtn) => {
+    let modeButtons = [
+        document.getElementById("prelaunch-btn"),
+        document.getElementById("mission-btn"),
+        document.getElementById("standby-btn")
+    ];
+    for (let x of modeButtons) {
+        x.classList.remove("active");
+    }
+    modeButtons[activeBtn].classList.add("active");
+    modeButtons[activeBtn].classList.remove("wait");
+}
+
+const setMode = (newMode) => {
+    switch (newMode) {
+        case 0:
+            document.getElementById("prelaunch-btn").classList.add("wait");
+            serialcom.sendData("0");
+            break;
+        case 1:
+            document.getElementById("mission-btn").classList.add("wait");
+            serialcom.sendData("1");
+            break;
+        case 2:
+            document.getElementById("standby-btn").classList.add("wait");
+            serialcom.sendData("2");
+            break;
+    }
+}
+
+const parseData = data => Intl.NumberFormat('en-US',{ maximumSignificantDigits: 5 }).format(parseFloat(data));
+
 serialcom.dataReceived((data) => {
     // document.getElementById("received-view").innerHTML += (data + "</br>");
-    let parsedData = data.split(",");
-    document.getElementById("d-temp").innerHTML = parsedData[0];
-    document.getElementById("d-pressure").innerHTML = parsedData[1];
-    document.getElementById("d-ldr").innerHTML = parsedData[2];
-    document.getElementById("d-ax").innerHTML = parsedData[3];
-    document.getElementById("d-ay").innerHTML = parsedData[4];
-    document.getElementById("d-az").innerHTML = parsedData[5];
+    lastUpdate = Date.now();
+    if (data.startsWith("PRELAUNCH")) {
+        setActiveModeButton(0);
+        const rssi = data.split(":")[1];
+        document.getElementById("d-rssi").innerHTML = parseData(rssi);
+        clearDataFields();
+    } else if (data.startsWith("STANDBY")) {
+        setActiveModeButton(2);
+        const rssi = data.split(":")[1];
+        document.getElementById("d-rssi").innerHTML = parseData(rssi);
+        clearDataFields();
+    } else if (data.startsWith("LIVE:")) {
+        setActiveModeButton(1);
+        const parsedData = data.slice(5).split(",");
+        const dataFields = ["d-rssi", "d-temp", "d-pressure", "d-ldr", "d-voltage", "d-ax", "d-ay", "d-az"];
+        for (i in dataFields) {
+            if (i == 4 && parseInt(parsedData[4]) == -100) {
+                document.getElementById("d-voltage").innerHTML = '<span style="color:red;">NOT CONNECTED</span>';
+            } else {
+                document.getElementById(dataFields[i]).innerHTML = parseData(parsedData[i]);
+            }
+        }
+    }
+    
 });
 
 document.getElementById("port-select-btn").addEventListener("click", selectPort);
 // document.getElementById("send-btn").addEventListener("click", sendData);
 document.getElementById("back-btn").addEventListener("click", closePort);
+document.getElementById("prelaunch-btn").addEventListener("click", () => setMode(0));
+document.getElementById("mission-btn").addEventListener("click", () => setMode(1));
+document.getElementById("standby-btn").addEventListener("click", () => setMode(2));
 
 refreshSerialPorts();
+setInterval(() => {
+    if (lastUpdate) {
+        timeSinceUpdate = Math.round((Date.now() - lastUpdate) / 1000);
+        if (timeSinceUpdate == 0) {
+            document.getElementById("d-updatetime").innerHTML = '<span style="color:green">LIVE</span>';
+        } else {
+            document.getElementById("d-updatetime").innerHTML = `<span style="color:orange">${timeSinceUpdate} s<span>`;
+        }
+    }
+}, 200);

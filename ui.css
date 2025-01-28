@@ -76,9 +76,39 @@ body {
 
 .data-card {
     background-color: #444;
-    font-size: 14px;
+    font-size: 18px;
     padding: 30px;
-    width: 300px;
     border-radius: 25px;
-    margin: 10px;
+    margin: 20px;
+    line-height: 150%;
+}
+
+.data-card button {
+    font-size: 18px;
+    background-color: #222;
+    color: white;
+    border: none;
+    padding: 15px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.data-card button.active {
+    font-size: 18px;
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 15px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.data-card button.wait {
+    font-size: 18px;
+    background-color: orange;
+    color: white;
+    border: none;
+    padding: 15px;
+    margin: 5px;
+    cursor: pointer;
 }

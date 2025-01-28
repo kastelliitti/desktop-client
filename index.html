@@ -41,16 +41,26 @@
             </div>
             <div id="com-view" style="display: none;">
                 <div class="data-card">
-                    Temperature: <span id="d-temp">-</span> &deg;C
+                    <h2>
+                        Satellite Operating Mode
+                    </h2>
+                    <button id="prelaunch-btn">Prelauch</button>
+                    <button id="mission-btn">Mission</button>
+                    <button id="standby-btn">Standby</button><br>
+                    <p>
+                        Signal Strength: <span id="d-rssi"></span> dBm<br>
+                        Updated: <span id="d-updatetime">-</span>
+                    </p>
                 </div>
                 <div class="data-card">
-                    Pressure: <span id="d-pressure">-</span> mbar
-                </div>
-                <div class="data-card">
-                    LDR: <span id="d-ldr">-</span>
-                </div>
-                <div class="data-card">
-                    3D Acceleration: (<span id="d-ax">-</span>, <span id="d-ay">-</span>, <span id="d-az">-</span>)
+                    <h2>
+                        Live Data
+                    </h2>
+                    Temperature: <span id="d-temp">-</span> &deg;C<br>
+                    Pressure: <span id="d-pressure">-</span> mbar<br>
+                    LDR: <span id="d-ldr">-</span><br>
+                    Voltage Metered: <span id="d-voltage">-</span><br>
+                    3D Acceleration: (<span id="d-ax">-</span>, <span id="d-ay">-</span>, <span id="d-az">-</span>)<br>
                 </div>
             </div>
         </div>

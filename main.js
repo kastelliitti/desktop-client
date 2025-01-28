@@ -24,7 +24,7 @@ let port;
 const createWindow = () => {
     const window = new BrowserWindow({
         width: 800,
-        height: 600,
+        height: 700,
         titleBarStyle: 'hidden',
         titleBarOverlay: {
             color: '#444',
