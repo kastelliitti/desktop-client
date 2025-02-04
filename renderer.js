@@ -59,13 +59,10 @@ const closePort = () => {
 }
 
 const clearDataFields = () => {
-    document.getElementById("d-temp").innerHTML = "-";
-    document.getElementById("d-pressure").innerHTML = "-";
-    document.getElementById("d-ldr").innerHTML = "-";
-    document.getElementById("d-voltage").innerHTML = "-";
-    document.getElementById("d-ax").innerHTML = "-";
-    document.getElementById("d-ay").innerHTML = "-";
-    document.getElementById("d-az").innerHTML = "-";
+    const dataFields = ["d-temp", "d-pressure", "d-ldr", "d-voltage", "d-ax", "d-ay", "d-az"];
+    for (i in dataFields) {
+        document.getElementById(dataFields[i]).innerHTML = "-";
+    }
 }
 
 const setActiveModeButton = (activeBtn) => {
