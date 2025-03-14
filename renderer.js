@@ -137,7 +137,7 @@ setInterval(() => {
     if (lastUpdate) {
         timeSinceUpdate = Math.round((Date.now() - lastUpdate) / 1000);
         if (timeSinceUpdate == 0) {
-            document.getElementById("d-updatetime").innerHTML = '<span style="color:green">LIVE</span>';
+            document.getElementById("d-updatetime").innerHTML = '<span style="color:lightgreen">LIVE</span>';
         } else {
             document.getElementById("d-updatetime").innerHTML = `<span style="color:orange">${timeSinceUpdate} s<span>`;
         }
