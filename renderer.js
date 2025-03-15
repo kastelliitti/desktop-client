@@ -14,7 +14,10 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>. */
 
+const dataFields = ["d-temp", "d-pressure", "d-ldr", "d-voltage", "d-ax", "d-ay", "d-az"]
+
 let lastUpdate;
+let filePath;
 
 const refreshSerialPorts = async () => {
     const selector = document.getElementById("port-selector");
@@ -36,7 +39,7 @@ const refreshSerialPorts = async () => {
 const selectPort = () => {
     const port = document.getElementById("port-selector").value;
     if (port !== "not-selected") {
-        serialcom.select(port);
+        serialcom.select(port, filePath);
         document.getElementById("port-selection").style.display = "none";
         document.getElementById("com-view").style.display = "inline";
         document.getElementById("back-btn").style.display = "inline";
@@ -52,9 +55,11 @@ const sendData = () => {
 
 const closePort = () => {
     serialcom.closePort();
-    document.getElementById("port-selection").style.display = "inline";
+    document.getElementById("port-selection").style.display = "";
     document.getElementById("com-view").style.display = "none";
     document.getElementById("back-btn").style.display = "none";
+    document.getElementById("file-selection-file-name").innerHTML = "No file selected";
+    filePath = undefined;
     refreshSerialPorts();
 }
 
@@ -63,6 +68,12 @@ const clearDataFields = () => {
     for (i in dataFields) {
         document.getElementById(dataFields[i]).innerHTML = "-";
     }
+}
+
+const saveDialog = async () => {
+    const [fullPath, baseName] = await serialcom.saveDialog();
+    filePath = fullPath;
+    document.getElementById("file-selection-file-name").innerHTML = baseName;
 }
 
 const setActiveModeButton = (activeBtn) => {
@@ -95,38 +106,21 @@ const setMode = (newMode) => {
     }
 }
 
-const parseData = data => Intl.NumberFormat('en-US',{ maximumSignificantDigits: 5 }).format(parseFloat(data));
-
-serialcom.dataReceived((data) => {
-    // document.getElementById("received-view").innerHTML += (data + "</br>");
+serialcom.dataReceived((activeMode, signalStrength, dataFieldValues) => {
     lastUpdate = Date.now();
-    if (data.startsWith("PRELAUNCH")) {
-        setActiveModeButton(0);
-        const rssi = data.split(":")[1];
-        document.getElementById("d-rssi").innerHTML = parseData(rssi);
-        clearDataFields();
-    } else if (data.startsWith("STANDBY")) {
-        setActiveModeButton(2);
-        const rssi = data.split(":")[1];
-        document.getElementById("d-rssi").innerHTML = parseData(rssi);
-        clearDataFields();
-    } else if (data.startsWith("LIVE:")) {
-        setActiveModeButton(1);
-        const parsedData = data.slice(5).split(",");
-        const dataFields = ["d-rssi", "d-temp", "d-pressure", "d-ldr", "d-voltage", "d-ax", "d-ay", "d-az"];
+    setActiveModeButton(activeMode);
+    document.getElementById("d-rssi").innerHTML = signalStrength;
+    if (activeMode == 1) {
+        console.log(dataFieldValues);
         for (i in dataFields) {
-            if (i == 4 && parseInt(parsedData[4]) == -100) {
-                document.getElementById("d-voltage").innerHTML = '<span style="color:red;">NOT CONNECTED</span>';
-            } else {
-                document.getElementById(dataFields[i]).innerHTML = parseData(parsedData[i]);
-            }
+            document.getElementById(dataFields[i]).innerHTML = dataFieldValues[i];
         }
-    }
-    
+    }    
 });
 
 document.getElementById("port-select-btn").addEventListener("click", selectPort);
 document.getElementById("port-refresh-btn").addEventListener("click", refreshSerialPorts);
+document.getElementById("file-create-browse").addEventListener("click", saveDialog);
 document.getElementById("back-btn").addEventListener("click", closePort);
 document.getElementById("prelaunch-btn").addEventListener("click", () => setMode(0));
 document.getElementById("mission-btn").addEventListener("click", () => setMode(1));
