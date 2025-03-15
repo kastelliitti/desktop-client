@@ -126,7 +126,7 @@ serialcom.dataReceived((data) => {
 });
 
 document.getElementById("port-select-btn").addEventListener("click", selectPort);
-// document.getElementById("send-btn").addEventListener("click", sendData);
+document.getElementById("port-refresh-btn").addEventListener("click", refreshSerialPorts);
 document.getElementById("back-btn").addEventListener("click", closePort);
 document.getElementById("prelaunch-btn").addEventListener("click", () => setMode(0));
 document.getElementById("mission-btn").addEventListener("click", () => setMode(1));
