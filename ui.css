@@ -87,7 +87,7 @@ body {
     line-height: 150%;
 }
 
-.data-card button {
+.data-card button, .data-card input {
     font-size: 18px;
     background-color: #222;
     color: white;

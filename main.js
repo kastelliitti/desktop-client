@@ -45,7 +45,8 @@ const createWindow = () => {
 const parseData = data => Intl.NumberFormat('en-US',{ maximumSignificantDigits: 5 }).format(parseFloat(data));
 
 const dataReceived = (data, renderer) => {
-    const time = Date.now();
+    const d = new Date();
+    const time = d.toISOString();
     let activeMode = 0;
     let signalStrength = 0;
     let dataFieldValues = [];

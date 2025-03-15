@@ -46,13 +46,6 @@ const selectPort = () => {
     }
 }
 
-const sendData = () => {
-    const inputField = document.getElementById("input-field");
-    const dataToSend = inputField.value;
-    inputField.value = "";
-    serialcom.sendData(dataToSend);
-}
-
 const closePort = () => {
     serialcom.closePort();
     document.getElementById("port-selection").style.display = "";
@@ -106,6 +99,14 @@ const setMode = (newMode) => {
     }
 }
 
+const updateInterval = () => {
+    const newInterval = parseInt(document.getElementById("interval-input").value);
+    document.getElementById("interval-input").value = "";
+    if (newInterval != NaN && newInterval >= 50 && newInterval <= 10000) {
+        serialcom.sendData(newInterval.toString());
+    }
+}
+
 serialcom.dataReceived((activeMode, signalStrength, dataFieldValues) => {
     lastUpdate = Date.now();
     setActiveModeButton(activeMode);
@@ -125,6 +126,8 @@ document.getElementById("back-btn").addEventListener("click", closePort);
 document.getElementById("prelaunch-btn").addEventListener("click", () => setMode(0));
 document.getElementById("mission-btn").addEventListener("click", () => setMode(1));
 document.getElementById("standby-btn").addEventListener("click", () => setMode(2));
+document.getElementById("interval-input-btn").addEventListener("click", () => updateInterval);
+document.getElementById("interval-input").addEventListener("keydown", (e) => {if (e.key == "Enter") updateInterval()});
 
 refreshSerialPorts();
 setInterval(() => {
