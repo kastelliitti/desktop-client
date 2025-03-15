@@ -18,7 +18,7 @@
 <html>
     <head>
         <title>
-            Kastelliitti Desktop Client
+            Kastelliitti Control Centre
         </title>
         <link rel="stylesheet" href="ui.css">
     </head>
@@ -27,18 +27,25 @@
             <button id="back-btn" style="display: none;">
                 < Back
             </button>
-            Kastelliitti
+            Kastelliitti Control Centre
         </div>
         <div id="main-container">
             <div id="port-selection">
                 <h1>
-                    Select Serial Port:
+                    Select Serial Port
                 </h1>
                 <select id="port-selector">
                     <option value="not-selected">Searching ports...</option>
                 </select>
-                <button id="port-select-btn">Select</button>
                 <button id="port-refresh-btn">Refresh</button>
+                <h1>
+                    Create CSV File
+                </h1>
+                <span id="file-selection-file-name">No file selected</span>
+                <button id="file-create-browse">Browse...</button>
+                <div id="port-select-btn-container">
+                    <button id="port-select-btn">Select and Continue</button>
+                </div>
             </div>
             <div id="com-view" style="display: none;">
                 <div class="data-card">
