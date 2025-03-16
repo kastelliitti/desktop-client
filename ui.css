@@ -37,13 +37,18 @@ body {
     app-region: drag;
 }
 
-#port-selection {
+#start-view div {
     text-align: center;
 }
 
 #main-container {
     width: 80%;
     margin: auto;
+}
+
+#start-view div {
+    animation-name: slide-in;
+    animation-duration: 0.8s;
 }
 
 #port-selector {
@@ -54,7 +59,7 @@ body {
     height: 50px;
 }
 
-#port-select-btn, #port-refresh-btn, #file-create-browse {
+#start-view button, #port-select-btn, #port-refresh-btn, #file-create-browse {
     font-size: 18px;
     background-color: #444;
     color: white;
@@ -63,7 +68,17 @@ body {
     cursor: pointer;
 }
 
-#port-select-btn-container {
+#start-view a {
+    color: #439CEF;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#start-view div {
+    margin-top: 30vh;
+}
+
+.btn-container {
     margin-top: 30px;
 }
 
@@ -115,4 +130,9 @@ body {
     padding: 15px;
     margin: 5px;
     cursor: pointer;
+}
+
+@keyframes slide-in {
+	from {transform: translateX(-40vw); opacity: 0;}
+	to {transform: translateX(0vw); opacity: 1;}
 }

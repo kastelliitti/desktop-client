@@ -18,6 +18,7 @@ const dataFields = ["d-temp", "d-pressure", "d-ldr", "d-voltage", "d-ax", "d-ay"
 
 let lastUpdate;
 let filePath;
+let portStore;
 
 const refreshSerialPorts = async () => {
     const selector = document.getElementById("port-selector");
@@ -36,24 +37,22 @@ const refreshSerialPorts = async () => {
     }
 }
 
-const selectPort = () => {
-    const port = document.getElementById("port-selector").value;
-    if (port !== "not-selected") {
-        serialcom.select(port, filePath);
-        document.getElementById("port-selection").style.display = "none";
-        document.getElementById("com-view").style.display = "inline";
-        document.getElementById("back-btn").style.display = "inline";
-    }
-}
-
 const closePort = () => {
     serialcom.closePort();
-    document.getElementById("port-selection").style.display = "";
     document.getElementById("com-view").style.display = "none";
     document.getElementById("back-btn").style.display = "none";
     document.getElementById("file-selection-file-name").innerHTML = "No file selected";
     filePath = undefined;
-    refreshSerialPorts();
+    startWizard(true);
+    document.getElementById("start-view").style.display = "";
+}
+
+const showStartView = (viewName) => {
+    const startViews = document.getElementById("start-view").children;
+    for (view of startViews) {
+        view.style.display = "none";
+    }
+    document.getElementById("start-" + viewName).style.display = "";
 }
 
 const clearDataFields = () => {
@@ -65,8 +64,10 @@ const clearDataFields = () => {
 
 const saveDialog = async () => {
     const [fullPath, baseName] = await serialcom.saveDialog();
-    filePath = fullPath;
-    document.getElementById("file-selection-file-name").innerHTML = baseName;
+    if (fullPath) {
+        filePath = fullPath;
+        document.getElementById("file-selection-file-name").innerHTML = baseName;
+    }
 }
 
 const setActiveModeButton = (activeBtn) => {
@@ -107,6 +108,63 @@ const updateInterval = () => {
     }
 }
 
+const addDefaultEventListeners = () => {
+    document.getElementById("start-detected-select-manually-btn").addEventListener("click", showManualSelect);
+    document.getElementById("start-not-detected-select-manually-btn").addEventListener("click", showManualSelect);
+    document.getElementById("start-retry-port").addEventListener("click", showDetectScreen);
+    document.getElementById("port-select-btn").addEventListener("click", () => selectPort(document.getElementById("port-selector").value));
+    document.getElementById("port-refresh-btn").addEventListener("click", refreshSerialPorts);
+    document.getElementById("file-create-browse").addEventListener("click", saveDialog);
+    document.getElementById("start-finish-btn").addEventListener("click", finishWizard);
+    document.getElementById("back-btn").addEventListener("click", closePort);
+    document.getElementById("prelaunch-btn").addEventListener("click", () => setMode(0));
+    document.getElementById("mission-btn").addEventListener("click", () => setMode(1));
+    document.getElementById("standby-btn").addEventListener("click", () => setMode(2));
+    document.getElementById("interval-input-btn").addEventListener("click", () => updateInterval);
+    document.getElementById("interval-input").addEventListener("keydown", (e) => {if (e.key == "Enter") updateInterval()});
+}
+
+const selectPort = (port) => {
+    showStartView("file-create");
+    portStore = port;
+}
+
+const startWizard = (skipWelcome = false) => {
+    if (skipWelcome) {
+        showDetectScreen();
+    } else {
+        showStartView("welcome");
+        setTimeout(showDetectScreen, 1500);
+    }
+}
+
+const showDetectScreen = async () => {
+    const portsAvailable = await serialcom.list();
+    for (let i = 0; i < portsAvailable.length; i++) {
+        if (portsAvailable[i].vendorId == "10C4" && portsAvailable[i].productId == "EA60") {
+            document.getElementById("start-detected-port").innerHTML = portsAvailable[i].path;
+            document.getElementById("start-continue-port").addEventListener("click", () => selectPort(portsAvailable[i].path));
+            showStartView("detected");
+            return;
+        }
+    }
+    showStartView("not-detected");
+}
+
+const showManualSelect = () => {
+    showStartView("manual-select");
+    refreshSerialPorts();
+}
+
+const finishWizard = () => {
+    if (portStore && portStore != "not-selected") {
+        serialcom.select(portStore, filePath);
+        document.getElementById("start-view").style.display = "none";
+        document.getElementById("com-view").style.display = "";
+        document.getElementById("back-btn").style.display = "";
+    }
+}
+
 serialcom.dataReceived((activeMode, signalStrength, dataFieldValues) => {
     lastUpdate = Date.now();
     setActiveModeButton(activeMode);
@@ -119,17 +177,12 @@ serialcom.dataReceived((activeMode, signalStrength, dataFieldValues) => {
     }    
 });
 
-document.getElementById("port-select-btn").addEventListener("click", selectPort);
-document.getElementById("port-refresh-btn").addEventListener("click", refreshSerialPorts);
-document.getElementById("file-create-browse").addEventListener("click", saveDialog);
-document.getElementById("back-btn").addEventListener("click", closePort);
-document.getElementById("prelaunch-btn").addEventListener("click", () => setMode(0));
-document.getElementById("mission-btn").addEventListener("click", () => setMode(1));
-document.getElementById("standby-btn").addEventListener("click", () => setMode(2));
-document.getElementById("interval-input-btn").addEventListener("click", () => updateInterval);
-document.getElementById("interval-input").addEventListener("keydown", (e) => {if (e.key == "Enter") updateInterval()});
 
 refreshSerialPorts();
+addDefaultEventListeners();
+startWizard();
+
+
 setInterval(() => {
     if (lastUpdate) {
         timeSinceUpdate = Math.round((Date.now() - lastUpdate) / 1000);

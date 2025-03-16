@@ -101,7 +101,7 @@ const selectPort = (event, portPath, filePath) => {
     const parser = port.pipe(new ReadlineParser({ delimiter: "\n"}));
     parser.on("data", (data) => dataReceived(data, event.sender));
     console.log("success");
-    console.log(filePath);
+    console.log("file path: " + filePath);
     if (filePath) {
         fileWriter = fs.createWriteStream(filePath, {flags: 'w'});
         fileWriter.write(dataFields + '\n');
@@ -121,14 +121,19 @@ app.whenReady().then(() => {
     });
     ipcMain.handle("close-port", closePort);
     ipcMain.handle("save-dialog", (event) => {
-        var filePath = dialog.showSaveDialogSync(event.sender, {
+        const filePath = dialog.showSaveDialogSync(event.sender, {
             filters: [
                 {name: "CSV", extensions: ["csv"]}
             ],
             properties: ["createDirectory", "showHiddenFiles", "showOverwriteConfirmation"]
         });
-        console.log("Save location chosen: " + filePath);
-        return [filePath, path.basename(filePath)];
+        if (filePath) {
+            console.log("Save location chosen: " + filePath);
+            return [filePath, path.basename(filePath)];
+        } else {
+            console.log("No file chosen");
+            return [undefined, undefined];
+        }
     });
     createWindow();
 
