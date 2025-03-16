@@ -30,21 +30,50 @@
             Kastelliitti Control Centre
         </div>
         <div id="main-container">
-            <div id="port-selection">
-                <h1>
-                    Select Serial Port
-                </h1>
-                <select id="port-selector">
-                    <option value="not-selected">Searching ports...</option>
-                </select>
-                <button id="port-refresh-btn">Refresh</button>
-                <h1>
-                    Create CSV File
-                </h1>
-                <span id="file-selection-file-name">No file selected</span>
-                <button id="file-create-browse">Browse...</button>
-                <div id="port-select-btn-container">
-                    <button id="port-select-btn">Select and Continue</button>
+            <div id="start-view">
+                <div id="start-welcome" style="display: none;">
+                    <h1>
+                        Welcome
+                    </h1>
+                    <h3>
+                        to Kastelliitti Control Centre
+                    </h3>
+                </div>
+                <div id="start-detected" style="display: none;">
+                    <h1>
+                        Automatically detected receiver at <span id="start-detected-port"></span>
+                    </h1>
+                    <button id="start-continue-port">Continue</button>
+                    or <a id="start-detected-select-manually-btn">select port manually</a>
+                </div>
+                <div id="start-not-detected" style="display: none;">
+                    <h1>
+                        Could not automatically detect receiver
+                    </h1>
+                    <button id="start-retry-port">Retry</button>
+                    or <a id="start-not-detected-select-manually-btn">select port manually</a>
+                </div>
+                <div id="start-manual-select" style="display: none;">
+                    <h1>
+                        Select Port Manually
+                    </h1>
+                    <select id="port-selector">
+                        <option value="not-selected">Searching ports...</option>
+                    </select>
+                    <button id="port-refresh-btn">Refresh</button>
+                    <div class="btn-container">
+                        <button id="port-select-btn">Select and Continue</button>
+                    </div>
+                </div>
+                <div id="start-file-create" style="display: none;">
+                    <h1>
+                        Save data into CSV file?
+                    </h1>
+                    <span id="file-selection-file-name">No file</span>
+                    <button id="file-create-browse">Create new...</button>
+                    <div class="btn-container">
+                        <button id="start-finish-btn">Continue to Mission Control</button>
+                    </div>
                 </div>
             </div>
             <div id="com-view" style="display: none;">
