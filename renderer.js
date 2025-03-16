@@ -174,7 +174,9 @@ serialcom.dataReceived((activeMode, signalStrength, dataFieldValues) => {
         for (i in dataFields) {
             document.getElementById(dataFields[i]).innerHTML = dataFieldValues[i];
         }
-    }    
+    } else {
+        clearDataFields();
+    }
 });
 
 
