@@ -20,7 +20,7 @@ const { SerialPort } = require("serialport");
 const { ReadlineParser } = require('@serialport/parser-readline');
 const fs = require("fs");
 
-const dataFields = ["time", "signalstrength", "temp", "pressure", "ldr", "voltage", "ax", "ay", "az"];
+const dataFields = ["timestamp", "signal_strength", "temp(C)", "pressure(mbar)", "ldr(V)", "voltage(V)", "ax(G)", "ay(G)", "az(G)", "gx(mrad/s)", "gy(mrad/s)", "gz(mrad/s)", "battery_voltage(V)"];
 
 let port;
 let fileWriter;

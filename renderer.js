@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>. */
 
-const dataFields = ["d-temp", "d-pressure", "d-ldr", "d-voltage", "d-ax", "d-ay", "d-az"]
+const dataFields = ["d-temp", "d-pressure", "d-ldr", "d-voltage", "d-ax", "d-ay", "d-az", "d-gx", "d-gy", "d-gz", "d-battery-v"];
 
 let lastUpdate;
 let filePath;
@@ -56,7 +56,6 @@ const showStartView = (viewName) => {
 }
 
 const clearDataFields = () => {
-    const dataFields = ["d-temp", "d-pressure", "d-ldr", "d-voltage", "d-ax", "d-ay", "d-az"];
     for (i in dataFields) {
         document.getElementById(dataFields[i]).innerHTML = "-";
     }
