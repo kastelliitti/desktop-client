@@ -119,7 +119,7 @@ const addDefaultEventListeners = () => {
     document.getElementById("prelaunch-btn").addEventListener("click", () => setMode(0));
     document.getElementById("mission-btn").addEventListener("click", () => setMode(1));
     document.getElementById("standby-btn").addEventListener("click", () => setMode(2));
-    document.getElementById("interval-input-btn").addEventListener("click", () => updateInterval);
+    document.getElementById("interval-input-btn").addEventListener("click", updateInterval);
     document.getElementById("interval-input").addEventListener("keydown", (e) => {if (e.key == "Enter") updateInterval()});
 }
 
