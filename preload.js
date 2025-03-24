@@ -19,7 +19,7 @@ const { contextBridge, ipcRenderer } = require("electron");
 contextBridge.exposeInMainWorld("serialcom", {
     list: () => ipcRenderer.invoke("list"),
     select: (port, filePath) => ipcRenderer.invoke("select", port, filePath),
-    dataReceived: (callback) => ipcRenderer.on("data-received", (_event, activeMode, signalStrength, dataFieldValues) => callback(activeMode, signalStrength, dataFieldValues)),
+    dataReceived: (callback) => ipcRenderer.on("data-received", (_event, activeMode, signalStrength, dataFieldValues, dataFieldValuesRaw) => callback(activeMode, signalStrength, dataFieldValues, dataFieldValuesRaw)),
     sendData: (data) => ipcRenderer.invoke("send", data),
     closePort: () => ipcRenderer.invoke("close-port"),
     saveDialog: () => ipcRenderer.invoke("save-dialog")

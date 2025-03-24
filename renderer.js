@@ -20,6 +20,8 @@ let lastUpdate;
 let filePath;
 let portStore;
 
+let pastDataValues = [];
+
 const refreshSerialPorts = async () => {
     const selector = document.getElementById("port-selector");
     const serialPorts = await serialcom.list();
@@ -164,7 +166,21 @@ const finishWizard = () => {
     }
 }
 
-serialcom.dataReceived((activeMode, signalStrength, dataFieldValues) => {
+const plotValues = (canvasId, dataFieldId, numToPlot, maxVal, minVal = 0) => {
+    const ctx = document.getElementById(canvasId).getContext("2d");
+    const valsToPlot = pastDataValues[dataFieldId].slice(-numToPlot);
+    const canvasWidth = 200;
+    const canvasHeight = 100;
+    ctx.clearRect(0, 0, 200, 100);
+    ctx.beginPath();
+    ctx.moveTo(0, canvasHeight - (valsToPlot[0] * (canvasHeight / maxVal) - minVal));
+    for (let i = 1; i < numToPlot; i++) {
+        ctx.lineTo(i * (canvasWidth / numToPlot), canvasHeight - (valsToPlot[i] * (canvasHeight / maxVal) - minVal));
+    }
+    ctx.stroke();
+}
+
+serialcom.dataReceived((activeMode, signalStrength, dataFieldValues, dataFieldValuesRaw) => {
     lastUpdate = Date.now();
     setActiveModeButton(activeMode);
     document.getElementById("d-rssi").innerHTML = signalStrength;
@@ -172,7 +188,15 @@ serialcom.dataReceived((activeMode, signalStrength, dataFieldValues) => {
         console.log(dataFieldValues);
         for (i in dataFields) {
             document.getElementById(dataFields[i]).innerHTML = dataFieldValues[i];
+            if (pastDataValues[i]) {
+                pastDataValues[i].push(dataFieldValuesRaw[i]);
+            } else {
+                pastDataValues[i] = [dataFieldValuesRaw[i]];
+            }
         }
+        plotValues("d-temp-canvas", 0, 20, 50, -50);
+        plotValues("d-pressure-canvas", 1, 20, 1500);
+        plotValues("d-ldr-canvas", 2, 20, 5000);
     } else {
         clearDataFields();
     }

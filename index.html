@@ -93,9 +93,12 @@
                     <h2>
                         Live Data
                     </h2>
-                    Temperature: <span id="d-temp">-</span> &deg;C<br>
-                    Pressure: <span id="d-pressure">-</span> mbar<br>
-                    LDR: <span id="d-ldr">-</span> V<br>
+                    Temperature: <span id="d-temp">-</span> &deg;C
+                    <canvas id="d-temp-canvas" width="200" height="100"></canvas><br>
+                    Pressure: <span id="d-pressure">-</span> mbar
+                    <canvas id="d-pressure-canvas" width="200" height="100"></canvas><br>
+                    LDR: <span id="d-ldr">-</span> V
+                    <canvas id="d-ldr-canvas" width="200" height="100"></canvas><br>
                     Voltage: <span id="d-voltage">-</span> V<br>
                     3D Acceleration: (<span id="d-ax">-</span>, <span id="d-ay">-</span>, <span id="d-az">-</span>) G<br>
                     Gyroscope: (<span id="d-gx">-</span>, <span id="d-gy">-</span>, <span id="d-gz">-</span>) mrad/s<br>
