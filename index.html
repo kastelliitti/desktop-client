@@ -21,6 +21,7 @@
             Kastelliitti Control Centre
         </title>
         <link rel="stylesheet" href="ui.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     </head>
     <body>
         <div id="titlebar">
@@ -79,7 +80,7 @@
             <div id="com-view" style="display: none;">
                 <div class="data-card">
                     <h2>
-                        Satellite Operating Mode
+                        Satellite Operation Mode
                     </h2>
                     <button id="prelaunch-btn">Prelauch</button>
                     <button id="mission-btn">Mission</button>
@@ -93,11 +94,26 @@
                     <h2>
                         Live Data
                     </h2>
-                    Temperature: <span id="d-temp">-</span> &deg;C<br>
-                    Pressure: <span id="d-pressure">-</span> mbar<br>
-                    LDR: <span id="d-ldr">-</span><br>
-                    Voltage: <span id="d-voltage">-</span><br>
-                    3D Acceleration: (<span id="d-ax">-</span>, <span id="d-ay">-</span>, <span id="d-az">-</span>)<br>
+                    <div id="live-data-flex-container">
+                        <div class="live-data-column">
+                            Temperature: <span id="d-temp">-</span> &deg;C<br>
+                            <canvas id="d-temp-canvas" width="500" height="200"></canvas><br>
+                            Pressure: <span id="d-pressure">-</span> mbar<br>
+                            <canvas id="d-pressure-canvas" width="500" height="200"></canvas><br>
+                            LDR: <span id="d-ldr">-</span> V<br>
+                            <canvas id="d-ldr-canvas" width="500" height="200"></canvas><br>
+                        </div>
+                        <div class="live-data-column">
+                            Voltage: <span id="d-voltage">-</span> V<br>
+                            <canvas id="d-voltage-canvas" width="500" height="200"></canvas><br>
+                            3D Acceleration: (<span id="d-ax">-</span>, <span id="d-ay">-</span>, <span id="d-az">-</span>) G<br>
+                            <canvas id="d-acceleration-canvas" width="500" height="200"></canvas><br>
+                            Gyroscope: (<span id="d-gx">-</span>, <span id="d-gy">-</span>, <span id="d-gz">-</span>) mrad/s<br>
+                            <canvas id="d-gyro-canvas" width="500" height="200"></canvas><br>
+                            Battery Voltage <span id="d-battery-v">-</span> V<br>
+                            <canvas id="d-battery-canvas" width="500" height="200"></canvas><br>
+                        </div>
+                    </div>   
                 </div>
                 <div class="data-card">
                     <h2>

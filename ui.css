@@ -132,7 +132,22 @@ body {
     cursor: pointer;
 }
 
+.data-card canvas {
+    background-color: black;
+    border: 2px solid darkslategray;
+}
+
+#live-data-flex-container {
+    display: flex;
+}
+
 @keyframes slide-in {
 	from {transform: translateX(-40vw); opacity: 0;}
 	to {transform: translateX(0vw); opacity: 1;}
+}
+
+@media only screen and (max-width: 1500px) {
+    #live-data-flex-container {
+        display: inline-block;
+    }
 }

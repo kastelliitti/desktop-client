@@ -14,11 +14,13 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>. */
 
-const dataFields = ["d-temp", "d-pressure", "d-ldr", "d-voltage", "d-ax", "d-ay", "d-az"]
+const dataFields = ["d-temp", "d-pressure", "d-ldr", "d-voltage", "d-ax", "d-ay", "d-az", "d-gx", "d-gy", "d-gz", "d-battery-v"];
 
 let lastUpdate;
 let filePath;
 let portStore;
+
+let pastDataValues = [];
 
 const refreshSerialPorts = async () => {
     const selector = document.getElementById("port-selector");
@@ -56,7 +58,6 @@ const showStartView = (viewName) => {
 }
 
 const clearDataFields = () => {
-    const dataFields = ["d-temp", "d-pressure", "d-ldr", "d-voltage", "d-ax", "d-ay", "d-az"];
     for (i in dataFields) {
         document.getElementById(dataFields[i]).innerHTML = "-";
     }
@@ -120,7 +121,7 @@ const addDefaultEventListeners = () => {
     document.getElementById("prelaunch-btn").addEventListener("click", () => setMode(0));
     document.getElementById("mission-btn").addEventListener("click", () => setMode(1));
     document.getElementById("standby-btn").addEventListener("click", () => setMode(2));
-    document.getElementById("interval-input-btn").addEventListener("click", () => updateInterval);
+    document.getElementById("interval-input-btn").addEventListener("click", updateInterval);
     document.getElementById("interval-input").addEventListener("keydown", (e) => {if (e.key == "Enter") updateInterval()});
 }
 
@@ -165,7 +166,100 @@ const finishWizard = () => {
     }
 }
 
-serialcom.dataReceived((activeMode, signalStrength, dataFieldValues) => {
+const plotValues = (canvasId, dataFieldId, numToPlot, maxVal, minVal = 0) => {
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext("2d");
+    const valsToPlot = pastDataValues[dataFieldId].slice(-numToPlot);
+    const aWidth = canvas.width - 50;
+    const aHeight = canvas.height;
+    const range = maxVal - minVal;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "green";
+    ctx.font = "18px Arial";
+    ctx.fillText(maxVal, aWidth, 20);
+    ctx.fillText((maxVal + minVal) / 2, aWidth, aHeight / 2 + 9)
+    ctx.fillText(minVal, aWidth, aHeight - 2);
+    ctx.strokeStyle = "darkslategray";
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 10; i++) {
+        ctx.beginPath();
+        ctx.moveTo(0, i * (aHeight / 10));
+        ctx.lineTo(aWidth, i * (aHeight / 10));
+        ctx.stroke();
+    }
+    for (let i = 0; i < 10; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * (aWidth / 10), 0);
+        ctx.lineTo(i * (aWidth / 10), aHeight);
+        ctx.stroke();
+    }
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "green";
+    ctx.beginPath();
+    ctx.moveTo(0, aHeight - ((valsToPlot[0] - minVal) * (aHeight / range)));
+    for (let i = 1; i < numToPlot; i++) {
+        if (canvasId == "d-temp-canvas") {
+            console.log("Drawing line to x=" + (i * (aWidth / numToPlot)) + ", y=" + (aHeight - ((valsToPlot[i] - minVal) * (aHeight / range))));
+        }
+        ctx.lineTo(i * (aWidth / numToPlot), aHeight - ((valsToPlot[i] - minVal) * (aHeight / range)));
+    }
+    ctx.stroke();
+}
+
+const plot3DValues = (canvasId, xComponent, yComponent, zComponent, numToPlot, maxVal, minVal = 0) => {
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext("2d");
+    const xVals = pastDataValues[xComponent].slice(-numToPlot);
+    const yVals = pastDataValues[yComponent].slice(-numToPlot);
+    const zVals = pastDataValues[zComponent].slice(-numToPlot);
+    const aWidth = canvas.width - 50;
+    const aHeight = canvas.height;
+    const range = maxVal - minVal;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "green";
+    ctx.font = "18px Arial";
+    ctx.fillText(maxVal, aWidth, 20);
+    ctx.fillText((maxVal + minVal) / 2, aWidth, aHeight / 2 + 9)
+    ctx.fillText(minVal, aWidth, aHeight - 2);
+    ctx.strokeStyle = "darkslategray";
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 10; i++) {
+        ctx.beginPath();
+        ctx.moveTo(0, i * (aHeight / 10));
+        ctx.lineTo(aWidth, i * (aHeight / 10));
+        ctx.stroke();
+    }
+    for (let i = 0; i < 10; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * (aWidth / 10), 0);
+        ctx.lineTo(i * (aWidth / 10), aHeight);
+        ctx.stroke();
+    }
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "red";
+    ctx.beginPath();
+    ctx.moveTo(0, aHeight - ((xVals[0] - minVal) * (aHeight / range)));
+    for (let i = 1; i < numToPlot; i++) {
+        ctx.lineTo(i * (aWidth / numToPlot), aHeight - ((xVals[i] - minVal) * (aHeight / range)));
+    }
+    ctx.stroke();
+    ctx.strokeStyle = "green";
+    ctx.beginPath();
+    ctx.moveTo(0, aHeight - ((yVals[0] - minVal) * (aHeight / range)));
+    for (let i = 1; i < numToPlot; i++) {
+        ctx.lineTo(i * (aWidth / numToPlot), aHeight - ((yVals[i] - minVal) * (aHeight / range)));
+    }
+    ctx.stroke();
+    ctx.strokeStyle = "blue";
+    ctx.beginPath();
+    ctx.moveTo(0, aHeight - ((zVals[0] - minVal) * (aHeight / range)));
+    for (let i = 1; i < numToPlot; i++) {
+        ctx.lineTo(i * (aWidth / numToPlot), aHeight - ((zVals[i] - minVal) * (aHeight / range)));
+    }
+    ctx.stroke();
+}
+
+serialcom.dataReceived((activeMode, signalStrength, dataFieldValues, dataFieldValuesRaw) => {
     lastUpdate = Date.now();
     setActiveModeButton(activeMode);
     document.getElementById("d-rssi").innerHTML = signalStrength;
@@ -173,7 +267,19 @@ serialcom.dataReceived((activeMode, signalStrength, dataFieldValues) => {
         console.log(dataFieldValues);
         for (i in dataFields) {
             document.getElementById(dataFields[i]).innerHTML = dataFieldValues[i];
+            if (pastDataValues[i]) {
+                pastDataValues[i].push(dataFieldValuesRaw[i]);
+            } else {
+                pastDataValues[i] = [dataFieldValuesRaw[i]];
+            }
         }
+        plotValues("d-temp-canvas", 0, 50, 50, -50);
+        plotValues("d-pressure-canvas", 1, 50, 1500);
+        plotValues("d-ldr-canvas", 2, 50, 5000);
+        plotValues("d-voltage-canvas", 3, 50, 3, -1);
+        plot3DValues("d-acceleration-canvas", 4, 5, 6, 50, 2, -2);
+        plot3DValues("d-gyro-canvas", 7, 8, 9, 50, 300, -300);
+        plotValues("d-battery-canvas", 10, 50, 2, 0);
     } else {
         clearDataFields();
     }

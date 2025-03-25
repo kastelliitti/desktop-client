@@ -20,7 +20,7 @@ const { SerialPort } = require("serialport");
 const { ReadlineParser } = require('@serialport/parser-readline');
 const fs = require("fs");
 
-const dataFields = ["time", "signalstrength", "temp", "pressure", "ldr", "voltage", "ax", "ay", "az"];
+const dataFields = ["timestamp", "signal_strength", "temp(C)", "pressure(mbar)", "ldr(V)", "voltage(V)", "ax(G)", "ay(G)", "az(G)", "gx(mrad/s)", "gy(mrad/s)", "gz(mrad/s)", "battery_voltage(V)"];
 
 let port;
 let fileWriter;
@@ -29,7 +29,7 @@ const createWindow = () => {
     const window = new BrowserWindow({
         width: 800,
         height: 700,
-        titleBarStyle: 'hidden',
+        //titleBarStyle: 'hidden',
         titleBarOverlay: {
             color: '#444',
             symbolColor: '#439CEF',
@@ -51,6 +51,7 @@ const dataReceived = (data, renderer) => {
     let signalStrength = 0;
     let dataFieldValues = [];
     let dataFieldValuesParsed = [];
+    let dataFieldValuesRaw = [];
     if (data.startsWith("PRELAUNCH")) {
         activeMode = 0;
         const rssi = data.split(":")[1];
@@ -64,6 +65,7 @@ const dataReceived = (data, renderer) => {
         const parsedData = data.slice(5).split(",");
         signalStrength = parseData(parsedData[0]);
         for (i = 1; i < parsedData.length; i++) {
+            dataFieldValuesRaw[i - 1] = parseFloat(parsedData[i]);
             if (i == 4 && parseInt(parsedData[4]) == -100) {
                 dataFieldValues[i - 1] = 'NOT CONNECTED';
                 dataFieldValuesParsed[i - 1] = 'NOT CONNECTED';
@@ -76,7 +78,7 @@ const dataReceived = (data, renderer) => {
             fileWriter.write(`${time},${signalStrength},${dataFieldValues}\n`);
         }
     }
-    renderer.send("data-received", activeMode, signalStrength, dataFieldValuesParsed);
+    renderer.send("data-received", activeMode, signalStrength, dataFieldValuesParsed, dataFieldValuesRaw);
 }
 
 const selectPort = (event, portPath, filePath) => {
