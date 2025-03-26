@@ -115,6 +115,8 @@ const closePort = () => {
     if (fileWriter && fileWriter.isOpen) fileWriter.close();
 }
 
+if (require('electron-squirrel-startup')) app.quit();
+
 app.whenReady().then(() => {
     ipcMain.handle("list", () => SerialPort.list());
     ipcMain.handle("select", selectPort);
