@@ -100,10 +100,12 @@
                             <canvas id="d-temp-canvas" width="500" height="200"></canvas><br>
                             Pressure: <span id="d-pressure">-</span> mbar<br>
                             <canvas id="d-pressure-canvas" width="500" height="200"></canvas><br>
-                            LDR: <span id="d-ldr">-</span> V<br>
-                            <canvas id="d-ldr-canvas" width="500" height="200"></canvas><br>
+                            Altitude Approximation: <span id="d-altitude">-</span> m<br>
+                            <canvas id="d-altitude-canvas" width="500" height="200"></canvas><br>
                         </div>
                         <div class="live-data-column">
+                            LDR: <span id="d-ldr">-</span> V<br>
+                            <canvas id="d-ldr-canvas" width="500" height="200"></canvas><br>
                             Voltage: <span id="d-voltage">-</span> V<br>
                             <canvas id="d-voltage-canvas" width="500" height="200"></canvas><br>
                             3D Acceleration: (<span id="d-ax">-</span>, <span id="d-ay">-</span>, <span id="d-az">-</span>) G<br>
@@ -117,11 +119,23 @@
                 </div>
                 <div class="data-card">
                     <h2>
-                        Remote Settings
+                        Settings
                     </h2>
                     Measurement Interval (ms): <input id="interval-input" placeholder="50 - 10000 ms">
                     <button id="interval-input-btn">
                         Send
+                    </button><br>
+                    Number of Values to Plot: <input id="valstoplot-input" value="50">
+                    <button id="valstoplot-input-btn">
+                        Ok
+                    </button><br>
+                    Sea Level Temperature (K) <input id="weather-temp-input" value="296.15">
+                    <button id="weather-temp-input-btn">
+                        Set
+                    </button>
+                    Sea Level Air Pressure (mbar) <input id="weather-pressure-input" value="1013.15">
+                    <button id="weather-pressure-input-btn">
+                        Set
                     </button>
                 </div>
             </div>

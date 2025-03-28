@@ -29,7 +29,7 @@ const createWindow = () => {
     const window = new BrowserWindow({
         width: 800,
         height: 700,
-        //titleBarStyle: 'hidden',
+        titleBarStyle: 'hidden',
         titleBarOverlay: {
             color: '#444',
             symbolColor: '#439CEF',
