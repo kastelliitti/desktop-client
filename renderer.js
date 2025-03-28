@@ -20,7 +20,14 @@ let lastUpdate;
 let filePath;
 let portStore;
 
+let valsToPlotSetting = 50;
+let weather = {
+    temperature : 198.15,
+    pressure    : 1013.15
+}
+
 let pastDataValues = [];
+let pastAltitudeValues = [];
 
 const refreshSerialPorts = async () => {
     const selector = document.getElementById("port-selector");
@@ -109,6 +116,30 @@ const updateInterval = () => {
     }
 }
 
+const updateValsToPlot = () => {
+    const inputField = document.getElementById("valstoplot-input")
+    let inputVal = parseInt(inputField.value);
+    if (inputVal > 5 && inputVal < 2000) {
+        valsToPlotSetting = inputVal;
+    }
+}
+
+const updateTemperatureConstant = () => {
+    const inputField = document.getElementById("weather-temp-input");
+    const inputInt = parseFloat(inputField.value);
+    if (inputInt > 0) {
+        weather.temperature = inputInt;
+    }
+}
+
+const updatePressureConstant = () => {
+    const inputField = document.getElementById("weather-pressure-input");
+    const inputInt = parseFloat(inputField.value);
+    if (inputInt > 0) {
+        weather.pressure = inputInt;
+    }
+}
+
 const addDefaultEventListeners = () => {
     document.getElementById("start-detected-select-manually-btn").addEventListener("click", showManualSelect);
     document.getElementById("start-not-detected-select-manually-btn").addEventListener("click", showManualSelect);
@@ -123,6 +154,9 @@ const addDefaultEventListeners = () => {
     document.getElementById("standby-btn").addEventListener("click", () => setMode(2));
     document.getElementById("interval-input-btn").addEventListener("click", updateInterval);
     document.getElementById("interval-input").addEventListener("keydown", (e) => {if (e.key == "Enter") updateInterval()});
+    document.getElementById("valstoplot-input-btn").addEventListener("click", updateValsToPlot);
+    document.getElementById("weather-temp-input-btn").addEventListener("click", updateTemperatureConstant);
+    document.getElementById("weather-pressure-input-btn").addEventListener("click", updatePressureConstant);
 }
 
 const selectPort = (port) => {
@@ -169,7 +203,13 @@ const finishWizard = () => {
 const plotValues = (canvasId, dataFieldId, numToPlot, maxVal, minVal = 0) => {
     const canvas = document.getElementById(canvasId);
     const ctx = canvas.getContext("2d");
-    const valsToPlot = pastDataValues[dataFieldId].slice(-numToPlot);
+    let valsToPlot;
+    if (dataFieldId != 5000) {
+        valsToPlot = pastDataValues[dataFieldId].slice(-numToPlot);
+    } else {
+        valsToPlot = pastAltitudeValues.slice(-numToPlot);
+    }
+    
     const aWidth = canvas.width - 50;
     const aHeight = canvas.height;
     const range = maxVal - minVal;
@@ -273,13 +313,17 @@ serialcom.dataReceived((activeMode, signalStrength, dataFieldValues, dataFieldVa
                 pastDataValues[i] = [dataFieldValuesRaw[i]];
             }
         }
-        plotValues("d-temp-canvas", 0, 50, 50, -50);
-        plotValues("d-pressure-canvas", 1, 50, 1500);
-        plotValues("d-ldr-canvas", 2, 50, 5000);
-        plotValues("d-voltage-canvas", 3, 50, 3, -1);
-        plot3DValues("d-acceleration-canvas", 4, 5, 6, 50, 2, -2);
-        plot3DValues("d-gyro-canvas", 7, 8, 9, 50, 300, -300);
-        plotValues("d-battery-canvas", 10, 50, 2, 0);
+        let altitudeApprox = (weather.temperature / 0.0065) * (1 - Math.pow(dataFieldValuesRaw[1] / weather.pressure, 0.1903));
+        document.getElementById("d-altitude").innerHTML = altitudeApprox;
+        pastAltitudeValues.push(altitudeApprox);
+        plotValues("d-temp-canvas", 0, valsToPlotSetting, 50, -50);
+        plotValues("d-pressure-canvas", 1, valsToPlotSetting, 1500);
+        plotValues("d-altitude-canvas", 5000, valsToPlotSetting, 1300, 30, -5);
+        plotValues("d-ldr-canvas", 2, valsToPlotSetting, 5000);
+        plotValues("d-voltage-canvas", 3, valsToPlotSetting, 0.001, -0.001);
+        plot3DValues("d-acceleration-canvas", 4, 5, 6, valsToPlotSetting, 2, -2);
+        plot3DValues("d-gyro-canvas", 7, 8, 9, valsToPlotSetting, 300, -300);
+        plotValues("d-battery-canvas", 10, valsToPlotSetting, 2, 0);
     } else {
         clearDataFields();
     }
